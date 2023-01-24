@@ -1,7 +1,9 @@
 package frc.robot;
 
-import org.photonvision.PhotonCamera;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import org.photonvision.PhotonCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -12,6 +14,11 @@ public class Robot extends TimedRobot {
 
 
   PhotonCamera camera = new PhotonCamera("photonvision");
+  CANSparkMax frontRight = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax frontLeft = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax backRight = new CANSparkMax(4, MotorType.kBrushless);
+  CANSparkMax backLeft = new CANSparkMax(2, MotorType.kBrushless);
+
 
 
   @Override
@@ -44,12 +51,33 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    spin();
+    //see();
+  }
+
+  public void spin() {
+    frontRight.set(0.1);
+    frontLeft.set(0.1);
+    backRight.set(0.1);
+    backLeft.set(0.1);
+  }
+
+  public void see() {
     var result = camera.getLatestResult();
     var target = result.getBestTarget();
-    if(target == null) {
-      return;
+    double yaw = target.getYaw();
+    //System.out.println(target);
+    if(target != null) {
+      SmartDashboard.putNumber("Yaw", yaw);
     }
-    SmartDashboard.putNumber("Yaw", target.getYaw());
+
+    if (yaw < -5.0) {
+      //turn left
+    }
+
+    if (yaw > 5.0) {
+      //turn right
+    }
   }
 
   /** This function is called once when the robot is disabled. */
